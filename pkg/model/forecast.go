@@ -31,7 +31,7 @@ type HourlyUnits struct {
 
 // Hourly holds the slice data for each hourly metric.
 // All fields are slices of appropriate Go types.
-// time is a slice of strings in ISO8601 format.
+// time is a slice of time.Time parsed from ISO8601.
 // temperature_2m, rain, wind_speed_10m are float64 slices.
 // relative_humidity_2m is an int slice.
 

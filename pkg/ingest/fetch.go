@@ -1,18 +1,18 @@
 package ingest
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 
 	"github.com/Gashmore1/Weather-Collector/pkg/model"
 )
 
 // FetchForecast retrieves the JSON from the given URL and unmarshals it into a model.Forecast.
 // It returns an error if the HTTP request fails, the status is non‑200, or the body cannot be decoded.
-func FetchForecast(ctx time.Context, url string) (*model.Forecast, error) {
+func FetchForecast(ctx context.Context, url string) (*model.Forecast, error) {
 	// Create an HTTP request with the provided context so callers can cancel.
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {

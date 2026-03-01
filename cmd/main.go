@@ -10,7 +10,7 @@ import (
 
 func main() {
 	fmt.Println("Weather Collector starting…")
-	
+
 	var url string
 
 	// Example usage of the fetch function
@@ -27,6 +27,18 @@ func main() {
 		fmt.Println("Error fetching forecast:", err)
 		return
 	}
-	fmt.Printf("Fetched forecast for latitude %f, longitude %f\n", forecast.Latitude, forecast.Longitude)
+	records, err := ingest.TransformForecast(forecast)
+	if err != nil {
+		fmt.Println("Error transforming forecast:", err)
+		return
+	}
+	fmt.Printf("Transformed %d records. Sample:\n", len(records))
+	for i, r := range records {
+		if i >= 5 {
+			break
+		}
+		fmt.Printf("%+v\n", r)
+	}
+	fmt.Printf("Fetched forecast for latitude %f, longitude %f\n%f\n", forecast.Latitude, forecast.Longitude, forecast.Hourly.Temperature2m[0])
 
 }
