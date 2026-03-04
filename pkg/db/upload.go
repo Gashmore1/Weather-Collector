@@ -14,7 +14,7 @@ import (
 //
 //	CREATE TABLE hourly_records (
 //	    id          SERIAL PRIMARY KEY,
-//	    record_time TIMESTAMP NOT NULL,
+//	    record_time TIMESTAMP UNIQUE NOT NULL,
 //	    temperature DOUBLE PRECISION,
 //	    humidity    INTEGER,
 //	    rain        DOUBLE PRECISION,
@@ -47,7 +47,7 @@ func UploadRecords(ctx context.Context, db *sql.DB, records []ingest.HourlyRecor
 		}
 	}()
 
-	stmt, err := tx.PrepareContext(ctx, `INSERT INTO hourly_records (record_time, temperature, humidity, rain, wind_speed) VALUES ($1, $2, $3, $4, $5)`)
+	stmt, err := tx.PrepareContext(ctx, `INSERT INTO hourly_records (record_time, temperature, humidity, rain, wind_speed) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (record_time) DO NOTHING`)
 	if err != nil {
 		return fmt.Errorf("prepare statement: %w", err)
 	}
