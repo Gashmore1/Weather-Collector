@@ -9,6 +9,19 @@ import (
 	"github.com/Gashmore1/Weather-Collector/pkg/ingest"
 )
 
+func EnsureHourlyRecordsTable(ctx context.Context, db *sql.DB) error {
+    _, err := db.ExecContext(ctx, `CREATE TABLE IF NOT EXISTS hourly_records (
+        id SERIAL PRIMARY KEY,
+        record_time TIMESTAMP UNIQUE NOT NULL,
+        temperature DOUBLE PRECISION,
+        humidity INTEGER,
+        rain DOUBLE PRECISION,
+        wind_speed DOUBLE PRECISION
+    );`)
+    return err
+}
+
+
 // UploadRecords inserts hourly weather records into a PostgreSQL database.
 // The table is expected to have the following schema:
 //
@@ -31,7 +44,11 @@ import (
 // It returns an error if any part of the operation fails.
 func UploadRecords(ctx context.Context, db *sql.DB, records []ingest.HourlyRecord) error {
 	if len(records) == 0 {
-		return nil
+			return nil
+	}
+	// Ensure the target table exists before inserting records
+	if err := EnsureHourlyRecordsTable(ctx, db); err != nil {
+			return fmt.Errorf("ensure table: %w", err)
 	}
 
 	tx, err := db.BeginTx(ctx, nil)
